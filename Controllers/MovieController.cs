@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DVDMovie.Models; 
+using DVDMovie.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DVDMovie.Controllers
 {
@@ -11,15 +12,35 @@ namespace DVDMovie.Controllers
     public class MovieController : Controller
     {
         private DataContext context;
-        public MovieController(DataContext ctx){
+        public MovieController(DataContext ctx)
+        {
             context = ctx;
         }
 
-        [HttpGet("{id}")]                   	
-    	public Movie GetMovie(long id)
-    	{
+        [HttpGet("{id}")]
+        public Movie GetMovie(long id)
+        {
             System.Threading.Thread.Sleep(5000);
-        	return context.Movies.Find(id);
-    	}
+            Movie result = context.Movies
+                    .Include(m => m.Studio)
+                    .Include(m => m.Ratings)
+                    .FirstOrDefault(m => m.MovieId == id);
+            if (result != null)
+            {
+                if (result.Studio != null)
+                {
+                    result.Studio.Movies = null;
+                }
+                if (result.Ratings != null)
+                {
+                    foreach (Rating r in result.Ratings)
+                    {
+                        r.Movie = null;
+                    }
+                }
+            }
+            return result;
+
+        }
     }
 }
