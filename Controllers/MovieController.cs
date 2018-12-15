@@ -51,7 +51,7 @@ namespace DVDMovie.Controllers
             return result;
 
         }
-  
+
         [HttpGet]
         public IEnumerable<Movie> GetMovies(string category, string search,
                                             bool related = false)
@@ -91,7 +91,7 @@ namespace DVDMovie.Controllers
                 return query;
             }
         }
-    [HttpPost]
+        [HttpPost]
         public IActionResult CreateMovie([FromBody] MovieData mdata)
         {
             if (ModelState.IsValid)
@@ -110,5 +110,25 @@ namespace DVDMovie.Controllers
                 return BadRequest(ModelState);
             }
         }
-   }
+        [HttpPut("{id}")]
+        public IActionResult ReplaceMovie(long id, [FromBody] MovieData mData)
+        {
+            if (ModelState.IsValid)
+            {
+                Movie m = mData.Movie;
+                m.MovieId = id;
+                if (m.Studio != null && m.Studio.StudioId != 0)
+                {
+                    context.Attach(m.Studio);
+                }
+                context.Update(m);
+                context.SaveChanges();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+    }
 }
