@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using DVDMovie.Models;
 using Microsoft.EntityFrameworkCore;
+using DVDMovie.Models.BindingTargets;
 
 namespace DVDMovie.Controllers
 {
@@ -90,5 +91,24 @@ namespace DVDMovie.Controllers
                 return query;
             }
         }
-    }
+    [HttpPost]
+        public IActionResult CreateMovie([FromBody] MovieData mdata)
+        {
+            if (ModelState.IsValid)
+            {
+                Movie m = mdata.Movie;
+                if (m.Studio != null && m.Studio.StudioId != 0)
+                {
+                    context.Attach(m.Studio);
+                }
+                context.Add(m);
+                context.SaveChanges();
+                return Ok(m.MovieId);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+   }
 }
