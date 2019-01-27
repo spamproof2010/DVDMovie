@@ -7,7 +7,7 @@ import { ModelModule } from "./models/model.module";
 import { RoutingConfig } from "./app.routing";
 import { StoreModule } from "./store/store.module";
 import { MovieSelectionComponent } from "./store/movieSelection.component";
-
+import { AdminModule } from "./admin/admin.module";
 
 @NgModule({
   declarations: [
@@ -19,7 +19,8 @@ import { MovieSelectionComponent } from "./store/movieSelection.component";
     HttpClientModule,
     ModelModule,
     FormsModule,
-    StoreModule
+    StoreModule,
+    AdminModule
   ],
   providers: [],
   bootstrap: [AppComponent]
